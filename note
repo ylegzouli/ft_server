@@ -1,0 +1,82 @@
+docker run -ti -p 8080:80 debian:buster
+
+apt-get update
+apt-get upgrade
+
+apt-get install nginx
+apt-get install mariadb-server mariadb-client
+apt-get install php php-fpm php-mysql php-cli php-mbstring php-gd php-curl php-json
+apt-get install wget
+
+		-> copie fichier default dans /etc/nginx/sites-enabled/
+		-> copie fichier init_sql a la racine
+		-> copie fichier php.ini dans /etc/php/7.3/fpm/ 
+
+service mysql start && mysql -uroot -proot mysql < "/init_sql"
+
+wget https://files.phpmyadmin.net/phpMyAdmin/4.9.0.1/phpMyAdmin-4.9.0.1-all-languages.tar.gz
+tar -zxvf phpMyAdmin-4.9.0.1-all-languages.tar.gz
+rm phpMyAdmin-4.9.0.1-all-languages.tar.gz
+mv phpMyAdmin-4.9.0.1-all-languages phpmyadmin
+mv phpmyadmin /var/www/html
+
+		-> copie fichier config.inc.php dans var/www/html/phpmyadmin a la place de config.inc.sample.php
+
+____________________________________________________________________________________________
+mkdir /var/www/html/phpmyadmin/tmp
+____________________________________________________________________________________________
+
+wget http://fr.wordpress.org/latest-fr_FR.tar.gz
+tar -xzvf latest-fr_FR.tar.gz
+rm latest-fr_FR.tar.gz
+mv wordpress /var/www/html
+
+		-> copie fichier wp-config.php dans var/www/html/wordpress a la place de wp-config-sample.php
+
+chown -R www-data:www-data /var/www/html/phpmyadmin
+chmod -R 755 /var/www/html/phpmyadmin
+chown -R www-data:www-data /var/www/html/wordpress/
+chmod -R 755 /var/www/html/wordpress/
+chown -R www-data:www-data /var/www/*
+chmod -R 755 /var/www/*
+
+_________________________________________________________________________________________________
+NOTE: certificat ssl
+1.
+mkdir ~/mkcert && \
+  cd ~/mkcert && \
+  wget https://github.com/FiloSottile/mkcert/releases/download/v1.1.2/mkcert-v1.1.2-linux-amd64 && \
+  mv mkcert-v1.1.2-linux-amd64 mkcert && \
+  chmod +x mkcert
+./mkcert -install
+./mkcert localhost
+
+2.
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048\
+    -subj '/C=FR/ST=75/L=Paris/O=42/CN=avan-pra'\
+    -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+
+3. TUTO
+https://kifarunix.com/how-to-create-self-signed-ssl-certificate-with-mkcert-on-ubuntu-18-04/
+__________________________________________________________________________________________________
+
+service mysql start
+service php7.3-fpm start
+service nginx start
+
+__________________________________________________________________________________________________
+-> HELP:
+copie fichier debian/mac mac/debian
+	docker cp ContainerName:pathFROM pathTO
+phpmyadmin key: (a coller dans config.inc.php)
+	https://phpsolved.com/phpmyadmin-blowfish-secret-generator/
+wordpress key: (a coller dans wp-config.php)
+	curl -s https://api.wordpress.org/secret-key/1.1/salt/
+lancement containers
+	docker run -ti -p 8080:80 test
+build img
+	docker build -t test .
+supprimer tous les containers
+	docker rm -vf $(docker ps -a -q)
+supprimer toutes les images
+	docker rmi -f $(docker images -a -q)

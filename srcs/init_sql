@@ -1,0 +1,4 @@
+CREATE DATABASE newdb;
+CREATE USER 'username'@'localhost' IDENTIFIED BY 'userpassword';
+GRANT ALL ON newdb.* TO 'username'@'localhost' IDENTIFIED BY 'userpassword' WITH GRANT OPTION;
+FLUSH PRIVILEGES;

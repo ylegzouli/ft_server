@@ -1,6 +1,4 @@
-# Demarage des different service
-service nginx start
-service mysql restart
+service mysql start
 service php7.3-fpm start
-# suivi du fichier null (affichage derniere ligne puis toutes les ligne afficher a la suite)
+service nginx start
 tail -f /dev/null
