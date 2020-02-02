@@ -22,10 +22,6 @@ mv phpmyadmin /var/www/html
 
 		-> copie fichier config.inc.php dans var/www/html/phpmyadmin a la place de config.inc.sample.php
 
-____________________________________________________________________________________________
-mkdir /var/www/html/phpmyadmin/tmp
-____________________________________________________________________________________________
-
 wget http://fr.wordpress.org/latest-fr_FR.tar.gz
 tar -xzvf latest-fr_FR.tar.gz
 rm latest-fr_FR.tar.gz
@@ -41,8 +37,9 @@ chown -R www-data:www-data /var/www/*
 chmod -R 755 /var/www/*
 
 _________________________________________________________________________________________________
-NOTE: certificat ssl
-1.
+
+NOTE: certificat ssl (A faire)
+1. Exemple
 mkdir ~/mkcert && \
   cd ~/mkcert && \
   wget https://github.com/FiloSottile/mkcert/releases/download/v1.1.2/mkcert-v1.1.2-linux-amd64 && \
@@ -51,18 +48,43 @@ mkdir ~/mkcert && \
 ./mkcert -install
 ./mkcert localhost
 
-2.
-RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048\
+2. Exemple
+openssl req -x509 -nodes -days 365 -newkey rsa:2048\
     -subj '/C=FR/ST=75/L=Paris/O=42/CN=avan-pra'\
     -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
 
-3. TUTO
+3. Tuto
 https://kifarunix.com/how-to-create-self-signed-ssl-certificate-with-mkcert-on-ubuntu-18-04/
+
 __________________________________________________________________________________________________
 
 service mysql start
 service php7.3-fpm start
 service nginx start
+
+_________________________________________________________________________________________________
+
+FICHIER SRCS:
+
+1. default
+fichier de config nginx 
+Path: /etc/nginx/sites-enabled/defaut linker avec /etc/nginx/sites-avaible/default
+doit etre modifier pour ajouter les config php, ssl, index etc..
+
+2. init_sql
+liste de commandes sql pour la creation d'une base de donne et creation de l'utilisateur 
+a placer a la racine, puis a envoyer dans "mysql" pour executer les comandes
+
+3. config.inc.php
+fichier de config phpmyadmin
+Path: var/www/html/phpmyadmin/config.inc.sample.php
+ajouter une clef "blowfish" (voir liens dans HELP) puis le renommer
+
+4. wp-config.php
+fichier de config wordpress
+Path: var/www/html/wordpress/wp-config-sample.php
+ajouter la clef obtenu grace a la commande "curl.." (voir HELP)
+ajouter les info lier a la base de donnee (nom, utilisateur, mdp ...) -> ceux cree dans le fichier init_sql
 
 __________________________________________________________________________________________________
 -> HELP:
@@ -80,3 +102,5 @@ supprimer tous les containers
 	docker rm -vf $(docker ps -a -q)
 supprimer toutes les images
 	docker rmi -f $(docker images -a -q)
+
+__________________________________________________________________________________________________
