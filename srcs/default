@@ -19,8 +19,16 @@
 # Default server configuration
 #
 server {
-	listen 80 default_server;
-	listen [::]:80 default_server;
+    listen 80;
+    listen [::]:80;
+    server_name localhost www.localhost;
+    server_name 127.0.0.1 www.127.0.0.1;
+    return 301 https://$host$request_uri;
+}
+
+server {
+	#listen 80 default_server;
+	#listen [::]:80 default_server;
 
 	# SSL configuration
 	#
