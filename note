@@ -87,6 +87,7 @@ ajouter la clef obtenu grace a la commande "curl.." (voir HELP)
 ajouter les info lier a la base de donnee (nom, utilisateur, mdp ...) -> ceux cree dans le fichier init_sql
 
 __________________________________________________________________________________________________
+
 -> HELP:
 copie fichier debian/mac mac/debian
 	docker cp ContainerName:pathFROM pathTO

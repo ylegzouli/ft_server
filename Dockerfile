@@ -5,6 +5,7 @@ RUN apt-get -y upgrade
 RUN apt-get install -y nginx
 RUN apt-get install -y mariadb-server mariadb-client
 RUN apt-get install -y php php-fpm php-mysql php-cli php-mbstring php-gd php-curl php-json
+RUN apt-get install -y libnss3-tools
 RUN apt-get install -y wget
 
 COPY srcs/default /etc/nginx/sites-enabled/default
@@ -26,6 +27,13 @@ RUN rm latest-fr_FR.tar.gz
 RUN mv wordpress /var/www/html
 COPY srcs/wp-config.php var/www/html/wordpress/wp-config.php
 
+RUN wget https://github.com/FiloSottile/mkcert/releases/download/v1.1.2/mkcert-v1.1.2-linux-amd64
+RUN mv mkcert-v1.1.2-linux-amd64 mkcert
+RUN chmod +x mkcert
+RUN mkcert -install
+RUN mkcert localhost
+EXPOSE 80 443
+
 RUN chown -R www-data:www-data /var/www/html/phpmyadmin
 RUN chmod -R 755 /var/www/html/phpmyadmin
 RUN chown -R www-data:www-data /var/www/html/wordpress/
@@ -35,6 +43,5 @@ RUN chmod -R 755 /var/www/*
 
 RUN rm /var/www/html/index.nginx-debian.html
 COPY srcs/start.sh /start.sh
-#EXPOSE 80 443
 
 CMD ["bash", "/start.sh"]
