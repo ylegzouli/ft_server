@@ -30,8 +30,6 @@ COPY srcs/wp-config.php var/www/html/wordpress/wp-config.php
 RUN wget https://github.com/FiloSottile/mkcert/releases/download/v1.1.2/mkcert-v1.1.2-linux-amd64
 RUN mv mkcert-v1.1.2-linux-amd64 mkcert
 RUN chmod +x mkcert
-RUN mkcert -install
-RUN mkcert localhost
 EXPOSE 80 443
 
 RUN chown -R www-data:www-data /var/www/html/phpmyadmin
